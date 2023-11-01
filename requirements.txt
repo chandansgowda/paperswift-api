@@ -1,0 +1,5 @@
+Django
+django_allauth
+dj-rest-auth
+djangorestframework
+drf_spectacular
