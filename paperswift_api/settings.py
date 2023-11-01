@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-dyuqiy+@yi2%g+)ccujcf-uqnxs_(9uwgs*!6!*ht34o1!17sq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['paperswiftsjcetest.pythonanywhere.com']
 
 
 # Application definition
