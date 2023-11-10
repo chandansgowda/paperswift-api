@@ -18,3 +18,11 @@ class Course(models.Model):
     name = models.CharField(max_length=255, null=False)
     scheme = models.IntegerField()
 
+class Assignment(models.Model):
+    """
+    Details on who is assigned to which course.
+    """
+    course = models.OneToOneField(Course, on_delete=models.CASCADE)
+    paper_setter = models.OneToOneField(PaperSetter, on_delete=models.CASCADE)
+    hasAgreed = models.BooleanField(default=False)
+    isFinalized = models.BooleanField(default=False)
