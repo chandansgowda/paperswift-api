@@ -1,7 +1,9 @@
-from datetime import timezone
+from django.utils import timezone
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
+
 
 class PaperSetter(models.Model):
     """
@@ -11,19 +13,22 @@ class PaperSetter(models.Model):
     name = models.CharField(max_length=255, null=False)
     email = models.EmailField(unique=True, null=False)
 
+
 class Course(models.Model):
     """
     Course Details
     """
-    code = models.AutoField(primary_key=True)
+    code = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=255, null=False)
     scheme = models.IntegerField()
+
 
 class AssignmentStatus(models.TextChoices):
     REQUEST_PENDING = 'Request Pending', _('Request Pending')
     IN_PROGRESS = 'In Progress', _('In Progress')
     UPDATE_REQUESTED = 'Update Requested', _('Update Requested')
     COMPLETED = 'Completed', _('Completed')
+
 
 class Assignment(models.Model):
     """

@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     # Django Allauth
     'allauth',
     'allauth.account',
-    'dj_rest_auth'
+    'dj_rest_auth',
+    # Core Application
+    'core'
 ]
 
 SITE_ID = 1
