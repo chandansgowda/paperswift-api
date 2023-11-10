@@ -1,9 +1,5 @@
 from django.contrib import admin
-from .models import PaperSetter, Course, Assignment
-
-class PaperSetterAdmin(admin.ModelAdmin):
-    list_display = ('psid', 'name', 'email')
-    search_fields = ('name', 'email')
+from .models import Course, Assignment
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'scheme')
@@ -21,6 +17,5 @@ class AssignmentAdmin(admin.ModelAdmin):
         }),
     )
 
-admin.site.register(PaperSetter, PaperSetterAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Assignment, AssignmentAdmin)

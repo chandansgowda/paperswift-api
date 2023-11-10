@@ -1,18 +1,11 @@
 from django.utils import timezone
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from  django.contrib.auth.models import User
+
+from paperswift_api import settings
 
 # Create your models here.
-
-
-class PaperSetter(models.Model):
-    """
-    Paper Setter Details
-    """
-    psid = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255, null=False)
-    email = models.EmailField(unique=True, null=False)
-
 
 class Course(models.Model):
     """
@@ -35,7 +28,7 @@ class Assignment(models.Model):
     Details on who is assigned to which course.
     """
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    paper_setter = models.ForeignKey(PaperSetter, on_delete=models.CASCADE)
+    paper_setter = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     status = models.CharField(
         max_length=20,
