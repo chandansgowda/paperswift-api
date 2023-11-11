@@ -20,6 +20,18 @@ class Course(models.Model):
         return f"{self.name} ({self.code})"
 
 
+class Examination(models.Model):
+    """
+    Examination details to which papers are being set.
+    """
+    eid = models.AutoField(primary_key=True)
+    sem = models.IntegerField()
+    isSupplementary = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.sem} Sem Exam {'SUP' if self.isSupplementary else ''}"
+
+
 class AssignmentStatus(models.TextChoices):
     REQUEST_PENDING = 'Request Pending', _('Request Pending')
     IN_PROGRESS = 'In Progress', _('In Progress')
@@ -31,6 +43,7 @@ class Assignment(models.Model):
     """
     Details on who is assigned to which course.
     """
+    exam = models.ForeignKey(Examination, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     paper_setter = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
