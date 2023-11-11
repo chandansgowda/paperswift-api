@@ -32,6 +32,10 @@ ALLOWED_HOSTS = ['paperswiftsjcetest.pythonanywhere.com', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    # Django Admin Interface
+    "admin_interface",
+    "colorfield",
+    # Django [REQUIRED]
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,6 +54,10 @@ INSTALLED_APPS = [
     # Core Application
     'core'
 ]
+
+# Django Admin Interface
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 SITE_ID = 1
 
