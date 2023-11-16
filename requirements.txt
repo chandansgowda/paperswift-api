@@ -4,3 +4,4 @@ dj-rest-auth
 djangorestframework
 drf_spectacular
 django-admin-interface
+django-cors-headers
