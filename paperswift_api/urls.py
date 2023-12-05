@@ -21,9 +21,11 @@ from drf_spectacular.views import (
 
 from django.contrib import admin
 from django.urls import include, path
+from core import views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('update-server/', core_views.update_server_webhook),
     path('api/auth/', include('dj_rest_auth.urls')),
     path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'),
