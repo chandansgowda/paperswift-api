@@ -9,7 +9,7 @@ import json
 
 @api_view(["POST"])
 def update_server_webhook(request):
-    if request.data['hook']['events'][0]=="push":
+    if "ref" in request.data and request.data["ref"]=="refs/heads/main":
         subprocess.run(['git','restore','.'])
         subprocess.run(['git','pull'])
         return Response("Deployement Successful", 200)
