@@ -42,6 +42,14 @@ class Teacher(models.Model):
         return f"{self.name} - {self.designation}"
 
 
+class Scheme(models.Model):
+    sid = models.AutoField(primary_key=True)
+    year = models.IntegerField()
+    guidelines_doc_url = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.year} Scheme"
+
 
 class Course(models.Model):
     """
@@ -49,7 +57,10 @@ class Course(models.Model):
     """
     code = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=255, null=False)
-    scheme = models.IntegerField()
+    scheme = models.ForeignKey('Scheme', on_delete=models.CASCADE)
+    syllabus_doc_url = models.URLField(null=True, blank=True)
+    department = models.ForeignKey('Department', on_delete=models.CASCADE)
+    sem = models.IntegerField()
 
     def __str__(self):
         return f"{self.name} ({self.code})"
@@ -61,7 +72,9 @@ class Examination(models.Model):
     """
     eid = models.AutoField(primary_key=True)
     sem = models.IntegerField()
-    isSupplementary = models.BooleanField(default=False)
+    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE)
+    is_supplementary = models.BooleanField(default=False)
+    paper_submission_deadline = models.DateField()
 
     def __str__(self):
         return f"{self.sem} Sem Exam {'SUP' if self.isSupplementary else ''}"
@@ -81,9 +94,17 @@ class Assignment(models.Model):
     exam = models.ForeignKey(Examination, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     paper_setter = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    date = models.DateTimeField(default=timezone.now)
+    assigned_date = models.DateTimeField(default=timezone.now)
     status = models.CharField(
         max_length=20,
         choices=AssignmentStatus.choices,
         default=AssignmentStatus.REQUEST_PENDING,
     )
+    submission_date = models.DateTimeField(null=True, blank=True)
+    qp_doc_url = models.URLField(null=True, blank=True)
+    isPaid = models.BooleanField(default=False)
+    payment_ref_id = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.course} - {self.paper_setter}"
+
