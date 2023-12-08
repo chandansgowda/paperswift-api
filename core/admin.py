@@ -23,7 +23,7 @@ class SchemeAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'scheme', 'syllabus_doc_url', 'department', 'sem')
+    list_display = ('code', 'name', 'scheme', 'department', 'sem', 'syllabus_doc_url')
     list_filter = ('department', 'sem')
     search_fields = ('code', 'name')
     ordering = ('code',)

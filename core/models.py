@@ -13,7 +13,7 @@ class Department(models.Model):
     hod = models.OneToOneField('Teacher', null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return self.dept_short_name
+        return self.code
 
 
 class Teacher(models.Model):
@@ -48,7 +48,7 @@ class Scheme(models.Model):
     guidelines_doc_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.year} Scheme"
+        return f"{self.year}"
 
 
 class Course(models.Model):
@@ -77,7 +77,7 @@ class Examination(models.Model):
     paper_submission_deadline = models.DateField()
 
     def __str__(self):
-        return f"{self.sem} Sem Exam {'SUP' if self.isSupplementary else ''}"
+        return f"{self.sem} Sem Exam {'SUP' if self.is_supplementary else ''}"
 
 
 class AssignmentStatus(models.TextChoices):
