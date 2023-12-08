@@ -7,6 +7,41 @@ from paperswift_api import settings
 
 # Create your models here.
 
+class Department(models.Model):
+    code = models.CharField(max_length=50,primary_key=True)
+    name = models.CharField(max_length=255)
+    hod = models.OneToOneField('Teacher', null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.dept_short_name
+
+
+class Teacher(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, null=False, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    is_external = models.BooleanField(default=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    dob = models.DateField()
+    mobile_no = models.CharField(max_length=15)
+    address = models.TextField()
+    designation = models.CharField(max_length=255)
+    qualification = models.CharField(max_length=255)
+    bank_account_no = models.CharField(max_length=20)
+    bank_ifsc = models.CharField(max_length=15)
+    bank_name = models.CharField(max_length=255)
+    pan_no = models.CharField(max_length=15, unique=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.designation}"
+
+
 
 class Course(models.Model):
     """
@@ -45,7 +80,7 @@ class Assignment(models.Model):
     """
     exam = models.ForeignKey(Examination, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    paper_setter = models.ForeignKey(User, on_delete=models.CASCADE)
+    paper_setter = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     status = models.CharField(
         max_length=20,
