@@ -102,7 +102,7 @@ class Assignment(models.Model):
     )
     submission_date = models.DateTimeField(null=True, blank=True)
     qp_doc_url = models.URLField(null=True, blank=True)
-    isPaid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
     payment_ref_id = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
