@@ -24,6 +24,7 @@ app_name = 'management'
 router = DefaultRouter()
 router.register(r'exams', ExaminationViewSet, basename='exams')
 router.register(r'courses', CourseViewSet, basename='courses')
+router.register(r'teachers', TeacherViewSet, basename='teacher')
 
 urlpatterns = [
     path('', include(router.urls)),
