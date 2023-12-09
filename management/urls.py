@@ -22,7 +22,7 @@ from .views import *
 app_name = 'management'
 
 router = DefaultRouter()
-router.register(r'examinations', ExaminationViewSet, basename='exams')
+router.register(r'exams', ExaminationViewSet, basename='exams')
 router.register(r'courses', CourseViewSet, basename='courses')
 
 urlpatterns = [
