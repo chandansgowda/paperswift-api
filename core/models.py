@@ -109,8 +109,12 @@ class Assignment(models.Model):
         return f"{self.course} - {self.paper_setter}"
 
 
-class SuggestedPaperSetter(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    paper_setter = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    exam = models.ForeignKey(Examination, on_delete=models.CASCADE, null=True)
-    isExternal = models.BooleanField(default=True)
+class TeacherYear(models.Model):
+    """
+    Teacher Year Mapping
+    """
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    year = models.IntegerField()
+
+    class Meta:
+        verbose_name_plural = "Teacher-Year Mapping"

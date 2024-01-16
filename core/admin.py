@@ -35,13 +35,6 @@ class ExaminationAdmin(admin.ModelAdmin):
     search_fields = ('sem',)
     ordering = ('eid',)
 
-@admin.register(SuggestedPaperSetter)
-class SuggestedPaperSetterAdmin(admin.ModelAdmin):
-    list_display = ('course', 'paper_setter', 'exam', 'isExternal')
-    list_filter = ('isExternal',)
-    search_fields = ('course__name', 'paper_setter__name')
-    ordering = ('course',)
-
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
 
@@ -58,3 +51,10 @@ class AssignmentAdmin(admin.ModelAdmin):
             'fields': ('exam', 'course', 'paper_setter', 'assigned_date', 'status', 'submission_date', 'qp_doc_url', 'is_paid', 'payment_ref_id'),
         }),
     )
+
+
+@admin.register(TeacherYear)
+class TeacherYearAdmin(admin.ModelAdmin):
+    list_display = ('teacher', 'year')
+    list_filter = ('year',)
+    search_fields = ('teacher__name', 'year')
