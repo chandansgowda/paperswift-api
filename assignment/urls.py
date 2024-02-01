@@ -14,22 +14,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularSwaggerView,
-)
 
-from django.contrib import admin
 from django.urls import include, path
-from core import views as core_views
+from rest_framework.routers import DefaultRouter
+from .views import *
+
+app_name = 'assignment'
+
+router = DefaultRouter()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('webhook/ci/update-server/', core_views.update_server_webhook),
-    path('auth/', include('dj_rest_auth.urls')),
-    path('schema/', SpectacularAPIView.as_view(), name='api-schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'),
-         name='api-docs',),
-    path('management/', include('management.urls')),
-    path('assignment/', include('assignment.urls'))
+    path('', include(router.urls))
 ]
