@@ -58,8 +58,32 @@ def get_teachers_by_year(request, year):
     """""
     Get all paper setters by academic year (start year)
     """""
-    teacher_year_records = TeacherYear.objects.filter(year=year)
-    response = {"teachers": [], "count": len(teacher_year_records)}
-    for teacher_record in teacher_year_records:
-        response["teachers"].append(model_to_dict(teacher_record.teacher))
-    return JsonResponse(response)
+    try:
+        teacher_year_records = TeacherYear.objects.filter(year=year)
+        response = {"teachers": [], "count": len(teacher_year_records)}
+        for teacher_record in teacher_year_records:
+            response["teachers"].append(model_to_dict(teacher_record.teacher))
+        return JsonResponse(response)
+    except Exception as e:
+        return JsonResponse({"error": str(e)})
+
+
+@extend_schema(tags=['Teachers'])
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def clone_teacher_list(request):
+    '''
+    Clone teacher list from previous academic year. Format - {"year":2000,"teacher_ids":[1,2]}
+    Here year is the target academic year and teacher_ids are the ids of teachers to be cloned
+    '''
+    try:
+        year = request.data["year"]
+        teacher_ids = request.data["teacher_ids"]
+        for teacher_id in teacher_ids:
+            teacher = Teacher.objects.get(id=teacher_id)
+            teacher_year = TeacherYear(teacher=teacher, year=year)
+            teacher_year.save()
+            print("Done")
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"error": str(e)})
