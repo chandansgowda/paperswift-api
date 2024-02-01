@@ -1,7 +1,10 @@
+from django.forms.models import model_to_dict
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from core.models import Examination, Course
+from core.models import Examination, Course, TeacherYear
 from .serializers import *
 from drf_spectacular.utils import extend_schema
 
@@ -46,3 +49,17 @@ class TeacherViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
+
+
+@extend_schema(tags=['Teachers'])
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_teachers_by_year(request, year):
+    """""
+    Get all paper setters by academic year (start year)
+    """""
+    teacher_year_records = TeacherYear.objects.filter(year=year)
+    response = {"teachers": [], "count": len(teacher_year_records)}
+    for teacher_record in teacher_year_records:
+        response["teachers"].append(model_to_dict(teacher_record.teacher))
+    return JsonResponse(response)
