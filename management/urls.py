@@ -29,6 +29,6 @@ router.register(r'departments', DepartmentViewSet, basename='department')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('teachers/<int:year>', get_teachers_by_year),
+    path('get_teachers_by_year', get_teachers_by_year),
     path('clone_previous_academic_year_list', clone_teacher_list)
 ]

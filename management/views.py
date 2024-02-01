@@ -54,11 +54,12 @@ class TeacherViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=['Teachers'])
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_teachers_by_year(request, year):
+def get_teachers_by_year(request):
     """""
     Get all paper setters by academic year (start year)
     """""
     try:
+        year = int(request.query_params.get('year'))
         teacher_year_records = TeacherYear.objects.filter(year=year)
         response = {"teachers": [], "count": len(teacher_year_records)}
         for teacher_record in teacher_year_records:
