@@ -13,6 +13,13 @@ class ExaminationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+@extend_schema(tags=['Departments'])
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [IsAuthenticated]
+
+
 @extend_schema(tags=['Courses'])
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()

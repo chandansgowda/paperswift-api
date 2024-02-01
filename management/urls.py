@@ -25,6 +25,7 @@ router = DefaultRouter()
 router.register(r'exams', ExaminationViewSet, basename='exams')
 router.register(r'courses', CourseViewSet, basename='courses')
 router.register(r'teachers', TeacherViewSet, basename='teacher')
+router.register(r'departments', DepartmentViewSet, basename='department')
 
 urlpatterns = [
     path('', include(router.urls)),
