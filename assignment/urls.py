@@ -24,5 +24,6 @@ app_name = 'assignment'
 router = DefaultRouter()
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('bulk_assign_paper_setters', bulk_assign_paper_setters)
 ]

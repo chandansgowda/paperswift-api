@@ -91,8 +91,10 @@ class Assignment(models.Model):
     """
     Details on who is assigned to which course.
     """
+    class Meta:
+        unique_together = (('exam', 'course'))
     exam = models.ForeignKey(Examination, on_delete=models.CASCADE, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,)
     paper_setter = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     assigned_date = models.DateTimeField(default=timezone.now)
     status = models.CharField(
