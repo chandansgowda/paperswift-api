@@ -82,6 +82,7 @@ class Examination(models.Model):
 
 class AssignmentStatus(models.TextChoices):
     REQUEST_PENDING = 'Request Pending', _('Request Pending')
+    INVITE_REJECTED = 'Invite Rejected', _('Invite Rejected')
     IN_PROGRESS = 'In Progress', _('In Progress')
     UPDATE_REQUESTED = 'Update Requested', _('Update Requested')
     COMPLETED = 'Completed', _('Completed')
