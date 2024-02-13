@@ -9,11 +9,12 @@ from core.models import Assignment, Examination, Course, Teacher, TeacherYear
 from drf_spectacular.utils import extend_schema
 
 from utils.check_user import check_user
+from utils.send_email import send_email
 
 
 @extend_schema(tags=['Assignment'])
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def bulk_assign_paper_setters(request):
     '''
     Bulk Assign Paper Setters - POST JSON in this format -
@@ -38,6 +39,7 @@ def bulk_assign_paper_setters(request):
             assignment_obj = Assignment(exam=exam, course=course,paper_setter=paper_setter)
             assignment_obj.save()
             #TODO: Send email to the paper setter asking for approval
+            send_email(paper_setter.user.email, subject="Invitation to set Question paper", htmlContent="<html><head></head><body><p>Hello,</p>You have been invited to set question paper. Please use this link to accept the invite - google.com</p></body></html>")
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"error": str(e)})
