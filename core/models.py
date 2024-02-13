@@ -103,6 +103,7 @@ class Assignment(models.Model):
         choices=AssignmentStatus.choices,
         default=AssignmentStatus.REQUEST_PENDING,
     )
+    tracking_token = models.CharField(max_length=50, null=True, blank=True)
     submission_date = models.DateTimeField(null=True, blank=True)
     qp_doc_url = models.URLField(null=True, blank=True)
     is_paid = models.BooleanField(default=False)
