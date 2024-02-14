@@ -72,7 +72,7 @@ def set_paper_setter_decision(request):
 
         return HttpResponse(f"Thanks for your response. Status Updated - {assignment.status}")
     except Exception as e:
-        return JsonResponse({"error": str(e)})
+        return HttpResponse("ERROR: "+str(e))
 
 
 
