@@ -10,6 +10,7 @@ from drf_spectacular.utils import extend_schema
 
 from utils.check_user import check_user
 from utils.generate_token import generate_random_token
+from utils.html_content import get_invitation_html, get_qp_details_html
 from utils.send_email import send_email
 
 
@@ -41,7 +42,7 @@ def bulk_assign_paper_setters(request):
             assignment_obj.tracking_token = generate_random_token()
             assignment_obj.save()
             link = f"http://127.0.0.1:8000/assignment/set_paper_setter_decision?exam_id={exam.eid}&course_code={course.code}&token={assignment_obj.tracking_token}&has_approved="
-            send_email(paper_setter.user.email, subject="Invitation to set Question paper", htmlContent= f"<html><head></head><body><p>Hello,</p>You have been invited to set question paper. Awaiting your response: 1.<a href = {link+'1'}>Accept</a> 2.<a href = {link+'0'}>Reject</a></p></body></html>")
+            send_email(paper_setter.user.email, subject="Invitation to set Question paper", htmlContent= get_invitation_html(link))
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"error": str(e)})
@@ -69,6 +70,9 @@ def set_paper_setter_decision(request):
         else:
             assignment.status = "Invite Rejected"
         assignment.save()
+
+        if assignment.status=="In Progress":
+            send_email(assignment.paper_setter.user.email, subject="Question Paper Details", htmlContent=get_qp_details_html(syllabus_copy_link=course.syllabus_doc_url, upload_link="LINK"))
 
         return HttpResponse(f"Thanks for your response. Status Updated - {assignment.status}")
     except Exception as e:
