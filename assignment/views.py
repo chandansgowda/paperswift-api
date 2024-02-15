@@ -37,15 +37,19 @@ def bulk_assign_paper_setters(request):
         exam = Examination.objects.get(eid=exam_id)
         for assignment in assignments:
             course = Course.objects.get(code=assignment["course_code"])
-            paper_setter = Teacher.objects.get(id=assignment["paper_setter_id"])
-            assignment_obj = Assignment(exam=exam, course=course,paper_setter=paper_setter)
+            paper_setter = Teacher.objects.get(
+                id=assignment["paper_setter_id"])
+            assignment_obj = Assignment(
+                exam=exam, course=course, paper_setter=paper_setter)
             assignment_obj.tracking_token = generate_random_token()
             assignment_obj.save()
             link = f"http://127.0.0.1:8000/assignment/set_paper_setter_decision?exam_id={exam.eid}&course_code={course.code}&token={assignment_obj.tracking_token}&has_approved="
-            send_email(paper_setter.user.email, subject="Invitation to set Question paper", htmlContent= get_invitation_html(link))
+            send_email(paper_setter.user.email, subject="Invitation to set Question paper",
+                       htmlContent=get_invitation_html(semester=exam.sem, course_code=course.code, course_name=course.name,branch=course.department, deadline=exam.paper_submission_deadline, link=link))
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"error": str(e)})
+
 
 @extend_schema(tags=['Assignment'])
 @api_view(["GET"])
@@ -54,16 +58,17 @@ def set_paper_setter_decision(request):
         tracking_token = request.GET.get("token")
         exam_id = request.GET.get("exam_id")
         course_code = request.GET.get("course_code")
-        has_approved = int(request.GET.get("has_approved"))==1
+        has_approved = int(request.GET.get("has_approved")) == 1
         exam = Examination.objects.get(eid=exam_id)
         course = Course.objects.get(code=course_code)
         assignment = Assignment.objects.get(exam=exam, course=course)
 
-        if assignment.tracking_token!=tracking_token:
+        if assignment.tracking_token != tracking_token:
             raise Exception("Invalid Token")
 
-        if assignment.status!="Request Pending":
-            raise Exception("Invalid Status: Invitation has already been responded to.")
+        if assignment.status != "Request Pending":
+            raise Exception(
+                "Invalid Status: Invitation has already been responded to.")
 
         if has_approved:
             assignment.status = "In Progress"
@@ -71,13 +76,13 @@ def set_paper_setter_decision(request):
             assignment.status = "Invite Rejected"
         assignment.save()
 
-        if assignment.status=="In Progress":
-            send_email(assignment.paper_setter.user.email, subject="Question Paper Details", htmlContent=get_qp_details_html(syllabus_copy_link=course.syllabus_doc_url, upload_link="LINK"))
+        if assignment.status == "In Progress":
+            send_email(assignment.paper_setter.user.email, subject="Question Paper Details", htmlContent=get_qp_details_html(
+                syllabus_copy_link=course.syllabus_doc_url, upload_link="LINK"))
 
         return HttpResponse(f"Thanks for your response. Status Updated - {assignment.status}")
     except Exception as e:
         return HttpResponse("ERROR: "+str(e))
-
 
 
 # NOT USED FOR NOW

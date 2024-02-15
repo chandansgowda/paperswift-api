@@ -1,5 +1,80 @@
-def get_invitation_html(link):
-    return f"<html><head></head><body><p>Hello,</p>You have been invited to set question paper. Awaiting your response: 1.<a href = {link+'1'}>Accept</a> 2.<a href = {link+'0'}>Reject</a></p></body></html>"
+def get_invitation_html(semester, course_name, course_code, branch, deadline, link):
+    html_content = f"""
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accept/Reject Buttons</title>
+<style>
+    body {{
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+    }}
+    .container {{
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border: 2px solid black;
+
+    }}
+    p {{
+        margin-bottom: 10px;
+    }}
+    .btn {{
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        border: 1px solid #333;
+        background-color: #333;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }}
+    .accept-btn:active {{
+        background-color: #165d1a;
+    }}
+    .reject-btn:active {{
+        background-color: rgb(93, 13, 13);
+    }}
+    .accept-btn {{
+        background-color: green;
+        color: white;
+        margin-bottom: 5px;
+
+    }}
+    .reject-btn {{
+        background-color: red;
+        color: white;
+    }}
+</style>
+</head>
+<body>
+    <div class="container">
+        <p><strong>College:</strong> XYZ</p>
+        <p><strong>Semester:</strong> {semester}</p>
+        <p><strong>Course Name:</strong> {course_name}</p>
+        <p><strong>Course Code:</strong> {course_code}</p>
+        <p><strong>Branch:</strong> {branch}</p>
+        <p><strong>Deadline:</strong> {deadline}</p>
+
+        <div>
+            <a href={link+'1'}><button class="btn accept-btn" >Accept</button></a>
+            <a href={link+'0'}><button class="btn reject-btn">Reject</button></a>
+        </div>
+    </div>
+</body>
+</html>
+"""
+    return html_content
+
 
 def get_qp_details_html(syllabus_copy_link, upload_link):
     return f"<html><head></head><body><p>Hello,</p>YThanks for accepting the invitation to set the question paper. Please find attached the required format. Use this link to upload the question paper once set - LINK</p></body></html>"
