@@ -87,7 +87,7 @@ def get_qp_details_html(name, semester, course_name, course_code, branch, deadli
 <style>
     body {{
         font-family: Arial, sans-serif;
-        text-align: center;s
+        text-align: center;
         background-color: #f0f0f0;
         margin: 0;
         padding: 20px;
@@ -104,20 +104,6 @@ def get_qp_details_html(name, semester, course_name, course_code, branch, deadli
     h3 {{
         margin-bottom: 20px;
         color: green;
-    }}
-    .tick_container {{
-        width: 65px;
-        height: 65px;
-        background-color: green;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto 20px auto;
-    }}
-    .tick {{
-        font-size: 50px;
-        color: white;
     }}
     p {{
         margin-bottom: 15px;
@@ -145,9 +131,6 @@ def get_qp_details_html(name, semester, course_name, course_code, branch, deadli
 <body>
     <div class="container">
         <h3>ACCEPTANCE CONFIRMATION</h3>
-        <div class="tick_container">
-            <div class="tick">&#10004;</div>
-        </div>
         <p>Dear {name},</p>
         <p>Thanks for accepting the invitation to set the question paper. Please find attached, the repuired documents.</p>
 
