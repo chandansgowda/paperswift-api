@@ -78,7 +78,7 @@ def set_paper_setter_decision(request):
 
         if assignment.status == "In Progress":
             send_email(assignment.paper_setter.user.email, subject="Question Paper Details", htmlContent=get_qp_details_html(
-                syllabus_copy_link=course.syllabus_doc_url, upload_link="LINK"))
+                syllabus_copy_link=course.syllabus_doc_url, upload_link="#", deadline=exam.paper_submission_deadline, course_code=course.code, course_name=course.name, branch=course.department, semester=exam.sem, name=assignment.paper_setter.name))
 
         return HttpResponse(f"Thanks for your response. Status Updated - {assignment.status}")
     except Exception as e:
