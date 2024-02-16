@@ -5,3 +5,5 @@ djangorestframework
 drf_spectacular
 django-admin-interface
 django-cors-headers
+django-otp
+qrcode

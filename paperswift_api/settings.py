@@ -53,6 +53,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'dj_rest_auth',
+    # Django OTP
+    'django_otp',
+    'django_otp.plugins.otp_totp',
     # Core Application
     'core'
 ]
@@ -74,6 +77,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Django Allauth
     "allauth.account.middleware.AccountMiddleware",
+    # Django OTP
+    'django_otp.middleware.OTPMiddleware'
 ]
 
 ROOT_URLCONF = "paperswift_api.urls"
