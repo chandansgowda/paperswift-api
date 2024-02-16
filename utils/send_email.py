@@ -1,10 +1,13 @@
 import requests
+import os
 import json
 
-from utils.constants import BREVO_API_KEY
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
+
 
 def send_email(email, subject, htmlContent):
     """Send an email using the Brevo API."""
+    print(BREVO_API_KEY)
 
     try:
         url = "https://api.brevo.com/v3/smtp/email"
