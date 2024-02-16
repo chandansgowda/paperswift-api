@@ -48,7 +48,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     ordering = ('-assigned_date',)
     fieldsets = (
         ('Assignment Details', {
-            'fields': ('exam', 'course', 'paper_setter', 'assigned_date', 'status', 'submission_date', 'qp_doc_url', 'is_paid', 'payment_ref_id'),
+            'fields': ('exam', 'course', 'paper_setter', 'assigned_date', 'status', 'submission_date', 'tracking_token', 'qp_doc_url', 'is_paid', 'payment_ref_id'),
         }),
     )
 

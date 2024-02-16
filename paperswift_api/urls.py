@@ -20,8 +20,10 @@ from drf_spectacular.views import (
 )
 
 from django.contrib import admin
+from django.conf.urls.static import static
 from django.urls import include, path
 from core import views as core_views
+from paperswift_api import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,3 +35,5 @@ urlpatterns = [
     path('management/', include('management.urls')),
     path('assignment/', include('assignment.urls'))
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
