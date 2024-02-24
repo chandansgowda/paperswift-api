@@ -109,7 +109,7 @@ class Assignment(models.Model):
     qp_doc_url = models.URLField(null=True, blank=True)
     is_paid = models.BooleanField(default=False)
     payment_ref_id = models.CharField(max_length=50, null=True, blank=True)
-    comments = models.JSONField(null=True, blank=True)
+    comments = models.JSONField(null=True, blank=True, default=list)
 
     def __str__(self):
         return f"{self.course} - {self.paper_setter}"
