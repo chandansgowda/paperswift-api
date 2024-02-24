@@ -2,6 +2,7 @@ from datetime import datetime
 import hashlib
 import json
 import os
+import logging
 from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse
@@ -18,6 +19,7 @@ from utils.generate_token import generate_random_token
 from utils.html_content import get_invitation_html, get_qp_details_html
 from utils.send_email import send_email
 
+logger = logging.getLogger('logger')
 
 @extend_schema(tags=['Assignment'])
 @api_view(["POST"])
@@ -148,6 +150,7 @@ def upload_question_paper(request):
 @api_view(["POST"])
 def add_comment(request):
     try:
+        logger.debug(request.data)
         tracking_token = request.data["tracking_token"]
         exam_id = request.data["exam_id"]
         course_code = request.data["course_code"]
