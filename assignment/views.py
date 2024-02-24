@@ -1,5 +1,6 @@
 from datetime import datetime
 import hashlib
+import json
 import os
 from django.shortcuts import render
 from django.forms.models import model_to_dict
@@ -109,11 +110,13 @@ def upload_question_paper(request):
 
         if question_paper_file:
             # Generate a hash of the file name using SHA-256
-            file_hash = hashlib.sha256(question_paper_file.name.encode()).hexdigest()
+            file_hash = hashlib.sha256(
+                question_paper_file.name.encode()).hexdigest()
             file_extension = os.path.splitext(question_paper_file.name)[1]
 
             # Define the directory to save the uploaded file
-            upload_dir = os.path.join(settings.MEDIA_ROOT, 'question_papers', str(exam_id), str(department), str(course_code))
+            upload_dir = os.path.join(settings.MEDIA_ROOT, 'question_papers', str(
+                exam_id), str(department), str(course_code))
 
             # Create the directory if it doesn't exist
             os.makedirs(upload_dir, exist_ok=True)
@@ -141,3 +144,29 @@ def upload_question_paper(request):
         return JsonResponse({"error": str(e)})
 
 
+@extend_schema(tags=['Assignment'])
+@api_view(["POST"])
+def add_comment(request):
+    try:
+        tracking_token = request.data["tracking_token"]
+        exam_id = request.data["exam_id"]
+        course_code = request.data["course_code"]
+        comment = request.data["comment"]
+        email = request.data["email"]
+
+        assignmentObj = Assignment.objects.get(
+            exam__eid=exam_id, course__code=course_code)
+        if assignmentObj.tracking_token != tracking_token:
+            raise Exception("Invalid Token")
+
+        new_entry = {
+            "email": email,
+            "comment": comment,
+            "date": datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+        }
+        assignmentObj.comments.append(new_entry)
+        assignmentObj.save()
+
+        return Response({"message": "Comment added successfully"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)})

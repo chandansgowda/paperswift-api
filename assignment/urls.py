@@ -27,5 +27,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('bulk_assign_paper_setters', bulk_assign_paper_setters),
     path('set_paper_setter_decision', set_paper_setter_decision),
-    path('upload_question_paper', upload_question_paper)
+    path('upload_question_paper', upload_question_paper),
+    path('comment', add_comment)
 ]
