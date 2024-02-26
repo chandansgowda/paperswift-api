@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import Examination, Course, TeacherYear
 from .serializers import *
 from drf_spectacular.utils import extend_schema
+from django.contrib.auth.models import User
 
 
 @extend_schema(tags=['Exams'])
@@ -36,7 +37,11 @@ class TeacherViewSet(viewsets.ModelViewSet):
     serializer_class = TeacherSerializer
 
     def create(self, request, *args, **kwargs):
-        # TODO Add logic to create a user
+        user = User.objects.create_user(
+            email=request.data["email"], password='welcome', username=request.data["email"])
+        user.save()
+        request._full_data = {**request.data, "user": user.id}
+        print(user)
         return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
@@ -88,5 +93,3 @@ def clone_teacher_list(request):
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"error": str(e)})
-
-    
