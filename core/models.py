@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from paperswift_api import settings
 
 # Create your models here.
+
+
 class Degree(models.Model):
     code = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=255)
@@ -15,7 +17,7 @@ class Degree(models.Model):
 
 
 class Department(models.Model):
-    code = models.CharField(max_length=50,primary_key=True)
+    code = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=255)
     hod = models.OneToOneField('Teacher', null=True, on_delete=models.SET_NULL)
     degree = models.ForeignKey('Degree', on_delete=models.CASCADE,)
@@ -146,3 +148,14 @@ class TeacherYear(models.Model):
 
     class Meta:
         verbose_name_plural = "Teacher-Year Mapping"
+
+
+class TeacherDepartment(models.Model):
+    """
+    Teacher Department Mapping
+    """
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Teacher-Department Mapping"

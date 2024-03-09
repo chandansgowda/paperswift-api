@@ -23,7 +23,7 @@ app_name = 'management'
 
 router = DefaultRouter()
 router.register(r'exams', ExaminationViewSet, basename='exams')
-router.register(r'scemes', SchemeViewSet, basename='schemes')
+router.register(r'schemes', SchemeViewSet, basename='schemes')
 router.register(r'degrees', DegreeViewSet, basename='degrees')
 router.register(r'courses', CourseViewSet, basename='courses')
 router.register(r'teachers', TeacherViewSet, basename='teacher')

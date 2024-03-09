@@ -28,7 +28,7 @@ class TeacherAdmin(admin.ModelAdmin):
 @admin.register(Scheme)
 class SchemeAdmin(admin.ModelAdmin):
     list_display = ('sid', 'degree', 'year', 'guidelines_doc_url')
-    search_fields = ('year','degree')
+    search_fields = ('year', 'degree')
     ordering = ('sid',)
 
 
@@ -74,3 +74,10 @@ class TeacherYearAdmin(admin.ModelAdmin):
     list_display = ('teacher', 'year')
     list_filter = ('year',)
     search_fields = ('teacher__name', 'year')
+
+
+@admin.register(TeacherDepartment)
+class TeacherDepartmentAdmin(admin.ModelAdmin):
+    list_display = ('teacher', 'department')
+    list_filter = ('department', 'teacher')
+    search_fields = ('teacher__name', 'department__name')
