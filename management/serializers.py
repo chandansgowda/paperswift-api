@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from core.models import Department, Examination, Course, Teacher
+from core.models import Degree, Department, Examination, Course, Scheme, Teacher
+
 
 class ExaminationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,7 +19,19 @@ class TeacherSerializer(serializers.ModelSerializer):
         model = Teacher
         fields = '__all__'
 
+
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
+        fields = '__all__'
+
+
+class DegreeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Degree
+        fields = '__all__'
+
+class SchemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scheme
         fields = '__all__'

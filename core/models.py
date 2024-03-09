@@ -51,8 +51,16 @@ class Teacher(models.Model):
 
 
 class Scheme(models.Model):
+    """
+    Academic Scheme Details
+    """
+
+    class Meta:
+        unique_together = (('degree', 'year',),)
+
     sid = models.AutoField(primary_key=True)
     year = models.IntegerField()
+    degree = models.ForeignKey('Degree', on_delete=models.CASCADE,)
     guidelines_doc_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
@@ -78,6 +86,9 @@ class Examination(models.Model):
     """
     Examination details to which papers are being set.
     """
+    class Meta:
+        unique_together = (('degree', 'sem', 'scheme', 'is_supplementary'),)
+
     eid = models.AutoField(primary_key=True)
     degree = models.ForeignKey('Degree', on_delete=models.CASCADE)
     sem = models.IntegerField()
@@ -86,9 +97,6 @@ class Examination(models.Model):
     paper_submission_deadline = models.DateField()
     is_exam_completed = models.BooleanField(default=False)
     description = models.TextField(null=True, blank=True)
-
-    class Meta:
-        unique_together = (('degree', 'sem', 'scheme', 'is_supplementary'),)
 
     def __str__(self):
         return f"{self.sem} Sem Exam {'SUP' if self.is_supplementary else ''}"

@@ -27,8 +27,8 @@ class TeacherAdmin(admin.ModelAdmin):
 
 @admin.register(Scheme)
 class SchemeAdmin(admin.ModelAdmin):
-    list_display = ('sid', 'year', 'guidelines_doc_url')
-    search_fields = ('year',)
+    list_display = ('sid', 'degree', 'year', 'guidelines_doc_url')
+    search_fields = ('year','degree')
     ordering = ('sid',)
 
 
@@ -43,10 +43,10 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Examination)
 class ExaminationAdmin(admin.ModelAdmin):
-    list_display = ('eid', 'sem', 'scheme', 'is_supplementary',
-                    'paper_submission_deadline')
-    list_filter = ('sem', 'is_supplementary')
-    search_fields = ('sem',)
+    list_display = ('eid', 'degree', 'sem', 'scheme', 'is_supplementary',
+                    'paper_submission_deadline', 'is_exam_completed')
+    list_filter = ('degree', 'sem', 'is_supplementary', 'is_exam_completed')
+    search_fields = ('sem', 'degree')
     ordering = ('eid',)
 
 

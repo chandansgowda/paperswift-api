@@ -4,10 +4,22 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from core.models import Examination, Course, TeacherYear
+from core.models import Degree, Examination, Course, TeacherYear
 from .serializers import *
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth.models import User
+
+
+@extend_schema(tags=['Degrees'])
+class DegreeViewSet(viewsets.ModelViewSet):
+    queryset = Degree.objects.all()
+    serializer_class = DegreeSerializer
+
+
+@extend_schema(tags=['Schemes'])
+class SchemeViewSet(viewsets.ModelViewSet):
+    queryset = Scheme.objects.all()
+    serializer_class = SchemeSerializer
 
 
 @extend_schema(tags=['Exams'])
