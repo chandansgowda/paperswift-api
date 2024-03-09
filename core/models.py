@@ -6,11 +6,19 @@ from django.contrib.auth.models import User
 from paperswift_api import settings
 
 # Create your models here.
+class Degree(models.Model):
+    code = models.CharField(max_length=50, primary_key=True)
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.code
+
 
 class Department(models.Model):
     code = models.CharField(max_length=50,primary_key=True)
     name = models.CharField(max_length=255)
     hod = models.OneToOneField('Teacher', null=True, on_delete=models.SET_NULL)
+    degree = models.ForeignKey('Degree', on_delete=models.CASCADE,)
 
     def __str__(self):
         return self.code
@@ -71,10 +79,16 @@ class Examination(models.Model):
     Examination details to which papers are being set.
     """
     eid = models.AutoField(primary_key=True)
+    degree = models.ForeignKey('Degree', on_delete=models.CASCADE)
     sem = models.IntegerField()
     scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE)
     is_supplementary = models.BooleanField(default=False)
     paper_submission_deadline = models.DateField()
+    is_exam_completed = models.BooleanField(default=False)
+    description = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = (('degree', 'sem', 'scheme', 'is_supplementary'),)
 
     def __str__(self):
         return f"{self.sem} Sem Exam {'SUP' if self.is_supplementary else ''}"
