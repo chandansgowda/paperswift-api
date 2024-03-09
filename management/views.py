@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from core.models import Degree, Examination, Course, TeacherYear
+from core.models import Degree, Examination, Course, TeacherDepartment, TeacherYear
 from .serializers import *
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth.models import User
@@ -105,3 +105,43 @@ def clone_teacher_list(request):
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"error": str(e)})
+
+
+@extend_schema(tags=['Degrees'])
+@api_view(["GET"])
+# @permission_classes([IsAuthenticated])
+def get_degree_and_schemes(request):
+    '''
+    Get degree and schemes.
+    '''
+    try:
+        degrees = Degree.objects.all()
+        response = []
+        for degree in degrees:
+            schemes = Scheme.objects.filter(degree=degree)
+            response.append({degree.code: [scheme.year for scheme in schemes]})
+        return JsonResponse({"degrees": response})
+    except Exception as e:
+        return JsonResponse({"error": str(e)})
+
+
+# @extend_schema(tags=['Teachers'])
+# @api_view(["POST"])
+# @permission_classes([IsAuthenticated])
+# def get_dept_and_teachers_for_exam(request):
+#     '''
+#     Get department and teachers for an exam.
+#     '''
+#     try:
+#         exam_id = request.data["exam_id"]
+#         exam = Examination.objects.get(eid=exam_id)
+#         departments = Department.objects.filter(degree=exam.degree)
+#         for dept in departments:
+#             paper_setters = TeacherDepartment.objects.filter(department=dept)
+#             dept.teachers = paper_setters
+#             dept_dict = model_to_dict(dept)
+#             dept_dict["teachers"] = []
+#             for teacher in dept.teachers.all():
+#                 dept_dict["teachers"].append(model_to_dict(teacher))
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)})
