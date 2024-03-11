@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from core.models import Degree, Examination, Course, TeacherDepartment, TeacherYear
+from core.models import Assignment, Degree, Examination, Course, TeacherDepartment, TeacherYear
 from .serializers import *
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth.models import User
@@ -141,17 +141,27 @@ def get_dept_and_teachers_for_exam(request, exam_id):
         print("Current year teachers: ", current_year_teachers)
         response = {"departments": [], "count": len(departments)}
         for department in departments:
-            # department.code
+            # Get Matching Paper Setters
             print(department.name)
             department_teacher_objs = TeacherDepartment.objects.filter(
                 department=department)
             department_teachers = [model_to_dict(department_teacher_obj.teacher)
                                    for department_teacher_obj in department_teacher_objs if department_teacher_obj.id in current_year_teachers]
             print(department_teachers)
+
+            # Get Matching Courses
             department_sem_courses = [model_to_dict(courseObj) for courseObj in Course.objects.filter(
                 department=department, sem=exam.sem)]
             response["departments"].append({department.code: {
                 "paper_setters": department_teachers, "courses": department_sem_courses}})
+
+        # Get Assignment Status
+        assignments = Assignment.objects.filter(exam=exam)
+        if len(assignments)==0:
+            response["assignment_status"] = 0
+        else:
+            response["assignment_status"] = 1
+
         return JsonResponse(response)
     except Exception as e:
         return JsonResponse({"error": str(e)})
