@@ -127,7 +127,7 @@ def get_degree_and_schemes(request):
 
 @extend_schema(tags=['Teachers'])
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_dept_and_teachers_for_exam(request, exam_id):
     '''
     Get department and teachers for an exam.
