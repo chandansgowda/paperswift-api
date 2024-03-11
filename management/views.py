@@ -109,7 +109,7 @@ def clone_teacher_list(request):
 
 @extend_schema(tags=['Degrees'])
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_degree_and_schemes(request):
     '''
     Get degree and schemes.
@@ -125,23 +125,33 @@ def get_degree_and_schemes(request):
         return JsonResponse({"error": str(e)})
 
 
-# @extend_schema(tags=['Teachers'])
-# @api_view(["POST"])
+@extend_schema(tags=['Teachers'])
+@api_view(["GET"])
 # @permission_classes([IsAuthenticated])
-# def get_dept_and_teachers_for_exam(request):
-#     '''
-#     Get department and teachers for an exam.
-#     '''
-#     try:
-#         exam_id = request.data["exam_id"]
-#         exam = Examination.objects.get(eid=exam_id)
-#         departments = Department.objects.filter(degree=exam.degree)
-#         for dept in departments:
-#             paper_setters = TeacherDepartment.objects.filter(department=dept)
-#             dept.teachers = paper_setters
-#             dept_dict = model_to_dict(dept)
-#             dept_dict["teachers"] = []
-#             for teacher in dept.teachers.all():
-#                 dept_dict["teachers"].append(model_to_dict(teacher))
-#     except Exception as e:
-#         return JsonResponse({"error": str(e)})
+def get_dept_and_teachers_for_exam(request, exam_id):
+    '''
+    Get department and teachers for an exam.
+    '''
+    try:
+        exam = Examination.objects.get(eid=exam_id)
+        year = exam.paper_submission_deadline.year
+        departments = Department.objects.filter(degree=exam.degree)
+        current_year_teachers = set(
+            [teacherObj.teacher.id for teacherObj in TeacherYear.objects.filter(year=year)])
+        print("Current year teachers: ", current_year_teachers)
+        response = {"departments": [], "count": len(departments)}
+        for department in departments:
+            # department.code
+            print(department.name)
+            department_teacher_objs = TeacherDepartment.objects.filter(
+                department=department)
+            department_teachers = [model_to_dict(department_teacher_obj.teacher)
+                                   for department_teacher_obj in department_teacher_objs if department_teacher_obj.id in current_year_teachers]
+            print(department_teachers)
+            department_sem_courses = [model_to_dict(courseObj) for courseObj in Course.objects.filter(
+                department=department, sem=exam.sem)]
+            response["departments"].append({department.code: {
+                "paper_setters": department_teachers, "courses": department_sem_courses}})
+        return JsonResponse(response)
+    except Exception as e:
+        return JsonResponse({"error": str(e)})
