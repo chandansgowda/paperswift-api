@@ -119,7 +119,8 @@ def get_degree_and_schemes(request):
         response = []
         for degree in degrees:
             schemes = Scheme.objects.filter(degree=degree)
-            response.append({degree.code: [scheme.year for scheme in schemes]})
+            response.append(
+                {degree.code: [{"year": scheme.year, "id": scheme.sid} for scheme in schemes]})
         return JsonResponse({"degrees": response})
     except Exception as e:
         return JsonResponse({"error": str(e)})
@@ -157,7 +158,7 @@ def get_dept_and_teachers_for_exam(request, exam_id):
 
         # Get Assignment Status
         assignments = Assignment.objects.filter(exam=exam)
-        if len(assignments)==0:
+        if len(assignments) == 0:
             response["assignment_status"] = 0
         else:
             response["assignment_status"] = 1
