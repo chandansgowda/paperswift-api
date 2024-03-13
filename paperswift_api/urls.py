@@ -26,7 +26,7 @@ from core import views as core_views
 from paperswift_api import settings
 from django_otp.admin import OTPAdminSite
 
-admin.site.__class__ = OTPAdminSite
+# admin.site.__class__ = OTPAdminSite
 
 urlpatterns = [
     path('admin/', admin.site.urls),
