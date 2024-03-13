@@ -133,6 +133,17 @@ def get_dept_and_teachers_for_exam(request, exam_id):
     '''
     Get department and teachers for an exam.
     '''
+    def get_course_and_assignment_status(courseObj, examObj):
+        course = model_to_dict(courseObj)
+        assignmentObj = Assignment.objects.filter(
+            course=courseObj, exam=examObj).order_by("assigned_date").first()
+        print(assignmentObj)
+        if not assignmentObj:
+            course["assignment_status"] = "NA"
+        else:
+            course["assignment_status"] = assignmentObj.status
+        return course
+
     try:
         exam = Examination.objects.get(eid=exam_id)
         year = exam.paper_submission_deadline.year
@@ -151,7 +162,7 @@ def get_dept_and_teachers_for_exam(request, exam_id):
             print(department_teachers)
 
             # Get Matching Courses
-            department_sem_courses = [model_to_dict(courseObj) for courseObj in Course.objects.filter(
+            department_sem_courses = [get_course_and_assignment_status(courseObj, exam) for courseObj in Course.objects.filter(
                 department=department, sem=exam.sem)]
             response["departments"].append({department.code: {
                 "paper_setters": department_teachers, "courses": department_sem_courses}})
