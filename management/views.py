@@ -140,8 +140,12 @@ def get_dept_and_teachers_for_exam(request, exam_id):
         print(assignmentObj)
         if not assignmentObj:
             course["assignment_status"] = "NA"
+            course["paper_setter_name"] = "NA"
+            course["paper_setter_id"] = -1
         else:
             course["assignment_status"] = assignmentObj.status
+            course["paper_setter_name"] = assignmentObj.paper_setter.name
+            course["paper_setter_id"] = assignmentObj.paper_setter.id
         return course
 
     try:
