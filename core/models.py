@@ -89,7 +89,8 @@ class Examination(models.Model):
     Examination details to which papers are being set.
     """
     class Meta:
-        unique_together = (('degree', 'sem', 'scheme', 'is_supplementary'),)
+        unique_together = (
+            ('degree', 'sem', 'scheme', 'is_supplementary', 'is_exam_completed'),)
 
     eid = models.AutoField(primary_key=True)
     degree = models.ForeignKey('Degree', on_delete=models.CASCADE)
