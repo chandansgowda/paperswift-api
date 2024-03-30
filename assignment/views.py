@@ -60,7 +60,7 @@ def bulk_assign_paper_setters(request):
                        htmlContent=get_invitation_html(semester=exam.sem, course_code=course.code, course_name=course.name, branch=course.department, deadline=exam.paper_submission_deadline, link=link))
         return JsonResponse({"success": True})
     except Exception as e:
-        return JsonResponse({"error": str(e)})
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @extend_schema(tags=['Assignment'])
@@ -94,7 +94,7 @@ def set_paper_setter_decision(request):
 
         return HttpResponse(f"Thanks for your response. Status Updated - {assignment.status}")
     except Exception as e:
-        return HttpResponse("ERROR: "+str(e))
+        return HttpResponse("ERROR: "+str(e), status=500)
 
 
 @extend_schema(tags=['Assignment'])
@@ -148,7 +148,7 @@ def upload_question_paper(request):
             raise Exception("No question paper uploaded")
 
     except Exception as e:
-        return JsonResponse({"error": str(e)})
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @extend_schema(tags=['Assignment'])
@@ -177,4 +177,4 @@ def add_comment(request):
 
         return Response({"message": "Comment added successfully"})
     except Exception as e:
-        return JsonResponse({"error": str(e)})
+        return JsonResponse({"error": str(e)}, status=500)
