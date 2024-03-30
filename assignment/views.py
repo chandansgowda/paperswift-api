@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import logging
+from time import timezone
 from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse
@@ -20,6 +21,7 @@ from utils.html_content import get_invitation_html, get_qp_details_html
 from utils.send_email import send_email
 
 logger = logging.getLogger('logger')
+
 
 @extend_schema(tags=['Assignment'])
 @api_view(["POST"])
@@ -46,10 +48,13 @@ def bulk_assign_paper_setters(request):
             course = Course.objects.get(code=assignment["course_code"])
             paper_setter = Teacher.objects.get(
                 id=assignment["paper_setter_id"])
-            assignment_obj = Assignment(
-                exam=exam, course=course, paper_setter=paper_setter)
+            assignment_obj, created = Assignment.objects.update_or_create(
+                exam=exam, course=course, defaults={
+                    "paper_setter": paper_setter,
+                    "status": 'Request Pending',
+                    "assigned_date": datetime.now(),
+                })
             assignment_obj.tracking_token = generate_random_token()
-            assignment_obj.save()
             link = f"http://127.0.0.1:8000/assignment/set_paper_setter_decision?exam_id={exam.eid}&course_code={course.code}&token={assignment_obj.tracking_token}&has_approved="
             send_email(paper_setter.user.email, subject="Invitation to set Question paper",
                        htmlContent=get_invitation_html(semester=exam.sem, course_code=course.code, course_name=course.name, branch=course.department, deadline=exam.paper_submission_deadline, link=link))
