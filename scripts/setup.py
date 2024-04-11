@@ -25,8 +25,17 @@ else:
 
 subprocess.run(activate_script, shell=True)
 
+api_key_value = input(
+    "Enter the value for BREVO_API_KEY environment variable: ")
+os.environ['BREVO_API_KEY'] = api_key_value
+
 print("Installing requirements...")
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
-print("Running the Django server...")
-subprocess.run(["python", "manage.py", "runserver"])
+print("Making migrations...")
+subprocess.run(["python", "manage.py", "makemigrations"])
+
+print("Applying migrations...")
+subprocess.run(["python", "manage.py", "migrate"])
+
+print("Successful!\nTo start the server -  python manage.py runserver")
