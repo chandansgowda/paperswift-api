@@ -55,6 +55,7 @@ def bulk_assign_paper_setters(request):
                     "assigned_date": datetime.now(),
                 })
             assignment_obj.tracking_token = generate_random_token()
+            assignment_obj.save()
             link = f"http://127.0.0.1:8000/assignment/set_paper_setter_decision?exam_id={exam.eid}&course_code={course.code}&token={assignment_obj.tracking_token}&has_approved="
             send_email(paper_setter.user.email, subject="Invitation to set Question paper",
                        htmlContent=get_invitation_html(semester=exam.sem, course_code=course.code, course_name=course.name, branch=course.department, deadline=exam.paper_submission_deadline, link=link))
