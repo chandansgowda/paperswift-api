@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import *
 
 
@@ -56,12 +57,19 @@ class AssignmentAdmin(admin.ModelAdmin):
     def papersetter_name(self, obj):
         return obj.paper_setter.first_name + " " + obj.paper_setter.last_name
 
+    def clickable_qp_url(self, obj):
+        if not obj.qp_doc_url:
+            return "NA"
+        else:
+            return format_html('<a href="{url}" target="_blank">Download</a>', url=obj.qp_doc_url)
+
     list_display = ('exam', 'course', 'paper_setter', 'assigned_date',
-                    'status', 'submission_date', 'qp_doc_url', 'is_paid', 'payment_ref_id')
+                    'status', 'submission_date', 'clickable_qp_url', 'is_paid', 'payment_ref_id')
     list_filter = ('exam', 'status', 'is_paid')
     search_fields = ('course__name', 'paper_setter__name')
     date_hierarchy = 'assigned_date'
     ordering = ('-assigned_date',)
+    readonly_fields = ('clickable_qp_url',)
     fieldsets = (
         ('Assignment Details', {
             'fields': ('exam', 'course', 'paper_setter', 'assigned_date', 'status', 'submission_date', 'tracking_token', 'qp_doc_url', 'is_paid', 'payment_ref_id', 'comments'),
