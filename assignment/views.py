@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 import hashlib
 import json
@@ -10,7 +11,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from core.models import Assignment, Examination, Course, Teacher, TeacherYear
 from drf_spectacular.utils import extend_schema
 from paperswift_api import settings
@@ -175,9 +176,64 @@ def add_comment(request):
             "comment": comment,
             "date": datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
         }
+
         assignmentObj.comments.append(new_entry)
+        assignmentObj.status = "Update Requested"
         assignmentObj.save()
 
         return Response({"message": "Comment added successfully"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@extend_schema(tags=['Assignment'])
+@api_view(["POST"])
+# @permission_classes([IsAdminUser])
+def accept_question_paper(request):
+    try:
+        logger.debug(request.data)
+        tracking_token = request.data["tracking_token"]
+        exam_id = request.data["exam_id"]
+        course_code = request.data["course_code"]
+
+        assignmentObj = Assignment.objects.get(
+            exam__eid=exam_id, course__code=course_code)
+        if assignmentObj.tracking_token != tracking_token:
+            raise Exception("Invalid Token")
+        if assignmentObj.status != "Submitted" and assignmentObj.status != "Update Requested":
+            raise Exception(
+                "Operation Not Allowed. Question paper is not uploaded yet.")
+
+        assignmentObj.status = "Completed"
+        assignmentObj.save()
+
+        return Response({"message": "Success"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@extend_schema(tags=['Assignment'])
+@api_view(["GET"])
+# @permission_classes([IsAdminUser])
+def submitted_papers(request, exam_id):
+    try:
+        examObj = Examination.objects.get(eid=exam_id)
+        assignmentObjs = Assignment.objects.filter(exam=examObj)
+        response = defaultdict(list)
+        for assignmentObj in assignmentObjs:
+            if assignmentObj.status=="Submitted" or assignmentObj.status=="Update Requested":
+                department = assignmentObj.course.department.code
+                response[department].append({
+                    "course_id": assignmentObj.course.code,
+                    "course_name": assignmentObj.course.name,
+                    "paper_setter": Teacher.objects.get(id=assignmentObj.paper_setter.id).name,
+                    "assigned_date": assignmentObj.assigned_date,
+                    "status": assignmentObj.status,
+                    "submission_date": assignmentObj.submission_date,
+                    "qp_doc_url": assignmentObj.qp_doc_url,
+                    "tracking_token": assignmentObj.tracking_token
+                })
+
+        return JsonResponse(response)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
