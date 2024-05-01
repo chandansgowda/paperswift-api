@@ -15,19 +15,21 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from core.models import Assignment, Examination, Course, Teacher, TeacherYear
 from drf_spectacular.utils import extend_schema
 from paperswift_api import settings
+from dotenv import load_dotenv
 
-from utils.check_user import check_user
-from utils.constants import FRONTEND_URL
+
 from utils.generate_token import generate_random_token
 from utils.html_content import get_invitation_html, get_qp_details_html, get_qp_review_html, get_submission_accepted_html
 from utils.send_email import send_email
 
 logger = logging.getLogger('logger')
+load_dotenv()
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 
 @extend_schema(tags=['Assignment'])
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def bulk_assign_paper_setters(request):
     '''
     Bulk Assign Paper Setters - POST JSON in this format -
@@ -196,7 +198,7 @@ def add_comment(request):
 
 @extend_schema(tags=['Assignment'])
 @api_view(["POST"])
-#@permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 def accept_question_paper(request):
     try:
         logger.debug(request.data)
@@ -226,7 +228,7 @@ def accept_question_paper(request):
 
 @extend_schema(tags=['Assignment'])
 @api_view(["GET"])
-# @permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 def submitted_papers(request, exam_id):
     try:
         examObj = Examination.objects.get(eid=exam_id)

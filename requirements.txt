@@ -7,3 +7,5 @@ django-admin-interface
 django-cors-headers
 django-otp
 qrcode
+python-dotenv
+psycopg2-binary
