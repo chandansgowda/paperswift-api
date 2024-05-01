@@ -17,8 +17,9 @@ from drf_spectacular.utils import extend_schema
 from paperswift_api import settings
 
 from utils.check_user import check_user
+from utils.constants import FRONTEND_URL
 from utils.generate_token import generate_random_token
-from utils.html_content import get_invitation_html, get_qp_details_html
+from utils.html_content import get_invitation_html, get_qp_details_html, get_qp_review_html, get_submission_accepted_html
 from utils.send_email import send_email
 
 logger = logging.getLogger('logger')
@@ -90,7 +91,7 @@ def set_paper_setter_decision(request):
             assignment.status = "Invite Rejected"
         assignment.save()
 
-        upload_link = f"http://127.0.0.1:49310/#/upload-qp?exam_id={exam_id}&course_code={course_code}&course_name={course.name}&sem={exam.sem}&tracking_token={assignment.tracking_token}"
+        upload_link = f"{FRONTEND_URL}/upload-qp?exam_id={exam_id}&course_code={course_code}&course_name={course.name}&sem={exam.sem}&tracking_token={assignment.tracking_token}"
 
         if assignment.status == "In Progress":
             send_email(assignment.paper_setter.user.email, subject="Question Paper Details", htmlContent=get_qp_details_html(
@@ -181,6 +182,13 @@ def add_comment(request):
         assignmentObj.status = "Update Requested"
         assignmentObj.save()
 
+        exam = Examination.objects.get(eid=exam_id)
+        course = Course.objects.get(code=course_code)
+        upload_link = f"{FRONTEND_URL}/#/upload-qp?exam_id={exam_id}&course_code={course_code}&course_name={course.name}&sem={exam.sem}&tracking_token={assignmentObj.tracking_token}"
+
+        send_email(assignmentObj.paper_setter.user.email, subject=f"Change Requested for {course_code} Question Paper", htmlContent=get_qp_review_html(
+                syllabus_copy_link=course.syllabus_doc_url, upload_link=upload_link, deadline=exam.paper_submission_deadline, course_code=course.code, course_name=course.name, branch=course.department, semester=exam.sem, name=assignmentObj.paper_setter.name, comment=comment))
+
         return Response({"message": "Comment added successfully"})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -188,7 +196,7 @@ def add_comment(request):
 
 @extend_schema(tags=['Assignment'])
 @api_view(["POST"])
-# @permission_classes([IsAdminUser])
+#@permission_classes([IsAdminUser])
 def accept_question_paper(request):
     try:
         logger.debug(request.data)
@@ -207,6 +215,10 @@ def accept_question_paper(request):
         assignmentObj.status = "Completed"
         assignmentObj.save()
 
+        exam = Examination.objects.get(eid=exam_id)
+        course = Course.objects.get(code=course_code)
+        send_email(assignmentObj.paper_setter.user.email, subject=f"Your {course_code} Question Paper has been accepted", htmlContent=get_submission_accepted_html(course_code=course.code, course_name=course.name, branch=course.department, semester=exam.sem, name=assignmentObj.paper_setter.name))
+
         return Response({"message": "Success"})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -221,7 +233,7 @@ def submitted_papers(request, exam_id):
         assignmentObjs = Assignment.objects.filter(exam=examObj)
         response = defaultdict(list)
         for assignmentObj in assignmentObjs:
-            if assignmentObj.status=="Submitted" or assignmentObj.status=="Update Requested":
+            if assignmentObj.status == "Submitted" or assignmentObj.status == "Update Requested":
                 department = assignmentObj.course.department.code
                 response[department].append({
                     "course_id": assignmentObj.course.code,
@@ -229,6 +241,7 @@ def submitted_papers(request, exam_id):
                     "paper_setter": Teacher.objects.get(id=assignmentObj.paper_setter.id).name,
                     "assigned_date": assignmentObj.assigned_date,
                     "status": assignmentObj.status,
+                    "comment": assignmentObj.comments[-1]["comment"] if assignmentObj.comments else "NA",
                     "submission_date": assignmentObj.submission_date,
                     "qp_doc_url": assignmentObj.qp_doc_url,
                     "tracking_token": assignmentObj.tracking_token

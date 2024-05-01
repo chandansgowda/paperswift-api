@@ -1,15 +1,17 @@
+import logging
 import requests
 import os
 import json
 
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
+logger = logging.getLogger('logger')
 
 
 def send_email(email, subject, htmlContent):
     """Send an email using the Brevo API."""
-    print(BREVO_API_KEY)
 
     try:
+        logger.info(f"Email with subject:{subject} is being sent to {email}")
         url = "https://api.brevo.com/v3/smtp/email"
 
         headers = {
@@ -34,6 +36,6 @@ def send_email(email, subject, htmlContent):
         payload_json = json.dumps(payload)
         response = requests.post(url, headers=headers, data=payload_json)
 
-        print(response.content)
+        logger.info(f"Email with subject:{subject} sent to {email}. API Response:  {str(response.content)}")
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        logger.error(f"Failed to send email: {e}")
