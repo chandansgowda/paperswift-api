@@ -109,18 +109,18 @@ WSGI_APPLICATION = "paperswift_api.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
-    'default': {
-        'ENGINE': os.getenv('SUPABASE_DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('SUPABASE_DB_NAME'),
-        'USER': os.getenv('SUPABASE_DB_USER'),
-        'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
-        'HOST': os.getenv('SUPABASE_DB_HOST'),
-        'PORT': os.getenv('SUPABASE_DB_PORT'),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
+    # 'default': {
+    #     'ENGINE': os.getenv('SUPABASE_DB_ENGINE', 'django.db.backends.postgresql'),
+    #     'NAME': os.getenv('SUPABASE_DB_NAME'),
+    #     'USER': os.getenv('SUPABASE_DB_USER'),
+    #     'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
+    #     'HOST': os.getenv('SUPABASE_DB_HOST'),
+    #     'PORT': os.getenv('SUPABASE_DB_PORT'),
+    # }
 }
 
 
