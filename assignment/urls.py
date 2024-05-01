@@ -30,5 +30,6 @@ urlpatterns = [
     path('upload_question_paper', upload_question_paper),
     path('comment', add_comment),
     path('accept_question_paper', accept_question_paper),
-    path('submitted_papers/<exam_id>', submitted_papers)
+    path('submitted_papers/<exam_id>', submitted_papers),
+    path('report', get_report)
 ]

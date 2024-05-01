@@ -250,3 +250,19 @@ def submitted_papers(request, exam_id):
         return JsonResponse(response)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+@extend_schema(tags=['Assignment'])
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def get_report(request):
+    try:
+        assignmentObjs = Assignment.objects.all()
+        response = defaultdict(int)
+        for assignmentObj in assignmentObjs:
+            response[assignmentObj.status] += 1
+        logger.info(f"Requested report: {response}")
+        return JsonResponse(response)
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return JsonResponse({"error": str(e)}, status=500)
