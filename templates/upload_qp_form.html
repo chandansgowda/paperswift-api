@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Question Paper</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      form {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        max-width: 100%;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input[type="text"],
+      input[type="file"] {
+        width: calc(100% - 12px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+
+      input[type="file"] {
+        margin-top: 5px;
+      }
+
+      button[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <h1 style="text-align: center">PaperSwift</h1>
+      <label for="exam_id">Exam ID:</label>
+      <input type="text" id="exam_id" name="exam_id" readonly />
+
+      <label for="course_code">Course Code:</label>
+      <input type="text" id="course_code" name="course_code" readonly />
+
+      <label for="courseName">Course Name:</label>
+      <input type="text" id="courseName" name="courseName" readonly />
+
+      <label for="semester">Semester:</label>
+      <input type="text" id="semester" name="semester" readonly />
+
+      <input type="text" id="tracking_token" name="tracking_token" hidden />
+
+      <label for="question_paper_file">Upload Question Paper:</label>
+      <input type="file" id="question_paper_file" name="question_paper_file" />
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <script>
+      window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const examId = urlParams.get("exam_id");
+        const courseCode = urlParams.get("course_code");
+        const courseName = urlParams.get("course_name");
+        const semester = urlParams.get("sem");
+        const trackingToken = urlParams.get("tracking_token");
+
+        document.getElementById("exam_id").value = examId;
+        document.getElementById("course_code").value = courseCode;
+        document.getElementById("courseName").value = courseName;
+        document.getElementById("semester").value = semester;
+        document.getElementById("tracking_token").value = trackingToken;
+
+        const form = document.getElementById("uploadForm");
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = new FormData(form);
+          fetch("http://127.0.0.1:8000/assignment/upload_question_paper", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Response was not ok");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log(data);
+              if (data.success) {
+                alert("Question paper uploaded successfully!");
+              } else {
+                alert("Failed to upload question paper. Please try again.");
+              }
+            })
+            .catch((error) => {
+              console.error("There was an error!", error);
+              alert(
+                "An error occurred while uploading the question paper.",
+                error
+              );
+            });
+        });
+      };
+    </script>
+  </body>
+</html>

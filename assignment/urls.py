@@ -32,5 +32,7 @@ urlpatterns = [
     path('accept_question_paper', accept_question_paper),
     path('submitted_papers/<exam_id>', submitted_papers),
     path('report', get_report),
-    path('send_reminder', send_reminder)
+    path('send_reminder', send_reminder),
+
+    path('upload-qp', upload_qp_form, name='upload_qp_form'),
 ]

@@ -93,7 +93,7 @@ def set_paper_setter_decision(request):
             assignment.status = "Invite Rejected"
         assignment.save()
 
-        upload_link = f"{FRONTEND_URL}/upload-qp?exam_id={exam_id}&course_code={course_code}&course_name={course.name}&sem={exam.sem}&tracking_token={assignment.tracking_token}"
+        upload_link = f"http://127.0.0.1:8000/assignment/upload-qp?exam_id={exam_id}&course_code={course_code}&course_name={course.name}&sem={exam.sem}&tracking_token={assignment.tracking_token}"
 
         if assignment.status == "In Progress":
             send_email(assignment.paper_setter.user.email, subject="Question Paper Details", htmlContent=get_qp_details_html(
@@ -186,7 +186,7 @@ def add_comment(request):
 
         exam = Examination.objects.get(eid=exam_id)
         course = Course.objects.get(code=course_code)
-        upload_link = f"{FRONTEND_URL}/#/upload-qp?exam_id={exam_id}&course_code={course_code}&course_name={course.name}&sem={exam.sem}&tracking_token={assignmentObj.tracking_token}"
+        upload_link = f"http://127.0.0.1:8000/assignment/upload-qp?exam_id={exam_id}&course_code={course_code}&course_name={course.name}&sem={exam.sem}&tracking_token={assignmentObj.tracking_token}"
 
         send_email(assignmentObj.paper_setter.user.email, subject=f"Change Requested for {course_code} Question Paper", htmlContent=get_qp_review_html(
                 syllabus_copy_link=course.syllabus_doc_url, upload_link=upload_link, deadline=exam.paper_submission_deadline, course_code=course.code, course_name=course.name, branch=course.department, semester=exam.sem, name=assignmentObj.paper_setter.name, comment=comment))
@@ -281,7 +281,7 @@ def send_reminder(request):
         assignmentObj = Assignment.objects.get(id=assignment_id)
         status = assignmentObj.status
 
-        logger.info(f"Assignment status is: {assignmentObj.status}")
+        logger.info(f"Assignment status is: {assignmentObj}")
         if status=="Request Pending":
             link = f"http://127.0.0.1:8000/assignment/set_paper_setter_decision?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&token={assignmentObj.tracking_token}&has_approved="
             html_content = get_invitation_reminder_html(
@@ -296,7 +296,7 @@ def send_reminder(request):
             send_email(email=assignmentObj.paper_setter.user.email, subject="PaperSwift Reminder: Please Respond ASAP", htmlContent=html_content)
 
         elif status=="In Progress":
-            upload_link = f"{FRONTEND_URL}/upload-qp?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&course_name={assignmentObj.course.name}&sem={assignmentObj.exam.sem}&tracking_token={assignmentObj.tracking_token}"
+            upload_link = f"http://127.0.0.1:8000/assignment/upload-qp?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&course_name={assignmentObj.course.name}&sem={assignmentObj.exam.sem}&tracking_token={assignmentObj.tracking_token}"
             html_content = get_submission_reminder_html(
                 semester=assignmentObj.course.sem,
                 course_name=assignmentObj.course.name,
@@ -310,7 +310,7 @@ def send_reminder(request):
             send_email(email=assignmentObj.paper_setter.user.email, subject="PaperSwift Reminder: Submit Question Paper", htmlContent=html_content)
 
         elif status=="Update Requested":
-            upload_link = f"{FRONTEND_URL}/upload-qp?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&course_name={assignmentObj.course.name}&sem={assignmentObj.exam.sem}&tracking_token={assignmentObj.tracking_token}"
+            upload_link = f"http://127.0.0.1:8000/assignment/upload-qp?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&course_name={assignmentObj.course.name}&sem={assignmentObj.exam.sem}&tracking_token={assignmentObj.tracking_token}"
             html_content = get_review_reminder_html(
                 semester=assignmentObj.course.sem,
                 course_name=assignmentObj.course.name,
@@ -328,3 +328,7 @@ def send_reminder(request):
     except Exception as e:
         logger.error(f"Error: {e}")
         return JsonResponse({"error": str(e)}, status=500)
+
+
+def upload_qp_form(request):
+    return render(request, 'upload_qp_form.html')
