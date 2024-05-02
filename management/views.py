@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from core.models import Assignment, Degree, Examination, Course, TeacherDepartment, TeacherYear
 from .serializers import *
 from drf_spectacular.utils import extend_schema
@@ -26,27 +26,28 @@ class SchemeViewSet(viewsets.ModelViewSet):
 class ExaminationViewSet(viewsets.ModelViewSet):
     queryset = Examination.objects.all()
     serializer_class = ExaminationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
 
 @extend_schema(tags=['Departments'])
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
 
 @extend_schema(tags=['Courses'])
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
 
 @extend_schema(tags=['Teachers'])
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
+    permission_classes = [IsAdminUser]
 
     def create(self, request, *args, **kwargs):
         user = User.objects.create_user(
@@ -70,7 +71,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
 
 @extend_schema(tags=['Teachers'])
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def get_teachers_by_year(request):
     """""
     Get all paper setters by academic year (start year)
@@ -88,7 +89,7 @@ def get_teachers_by_year(request):
 
 @extend_schema(tags=['Teachers'])
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def clone_teacher_list(request):
     '''
     Clone teacher list from previous academic year. Format - {"year":2000,"teacher_ids":[1,2]}
@@ -109,7 +110,7 @@ def clone_teacher_list(request):
 
 @extend_schema(tags=['Degrees'])
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def get_degree_and_schemes(request):
     '''
     Get degree and schemes.
@@ -128,7 +129,7 @@ def get_degree_and_schemes(request):
 
 @extend_schema(tags=['Teachers'])
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def get_dept_and_teachers_for_exam(request, exam_id):
     '''
     Get department and teachers for an exam.
@@ -139,10 +140,12 @@ def get_dept_and_teachers_for_exam(request, exam_id):
             course=courseObj, exam=examObj).order_by("assigned_date").first()
         print(assignmentObj)
         if not assignmentObj:
+            course["assignment_id"] = "NA"
             course["assignment_status"] = "NA"
             course["paper_setter_name"] = "NA"
             course["paper_setter_id"] = -1
         else:
+            course["assignment_id"] = assignmentObj.id
             course["assignment_status"] = assignmentObj.status
             course["paper_setter_name"] = assignmentObj.paper_setter.name
             course["paper_setter_id"] = assignmentObj.paper_setter.id

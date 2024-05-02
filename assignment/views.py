@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 
 
 from utils.generate_token import generate_random_token
-from utils.html_content import get_invitation_html, get_qp_details_html, get_qp_review_html, get_submission_accepted_html
+from utils.html_content import *
 from utils.send_email import send_email
 
 logger = logging.getLogger('logger')
@@ -238,6 +238,7 @@ def submitted_papers(request, exam_id):
             if assignmentObj.status == "Submitted" or assignmentObj.status == "Update Requested":
                 department = assignmentObj.course.department.code
                 response[department].append({
+                    "assignment_id": assignmentObj.id,
                     "course_id": assignmentObj.course.code,
                     "course_name": assignmentObj.course.name,
                     "paper_setter": Teacher.objects.get(id=assignmentObj.paper_setter.id).name,
@@ -265,6 +266,65 @@ def get_report(request):
             response[assignmentObj.status] += 1
         logger.info(f"Requested report: {response}")
         return JsonResponse(response)
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@extend_schema(tags=['Assignment'])
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def send_reminder(request):
+    try:
+        logger.debug(request.data)
+        assignment_id = request.data["assignment_id"]
+        assignmentObj = Assignment.objects.get(id=assignment_id)
+        status = assignmentObj.status
+
+        logger.info(f"Assignment status is: {assignmentObj.status}")
+        if status=="Request Pending":
+            link = f"http://127.0.0.1:8000/assignment/set_paper_setter_decision?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&token={assignmentObj.tracking_token}&has_approved="
+            html_content = get_invitation_reminder_html(
+                semester=assignmentObj.course.sem,
+                course_name=assignmentObj.course.name,
+                course_code=assignmentObj.course.code,
+                branch=assignmentObj.course.department.name,
+                deadline=assignmentObj.exam.paper_submission_deadline,
+                link=link,
+                name=assignmentObj.paper_setter.name
+            )
+            send_email(email=assignmentObj.paper_setter.user.email, subject="PaperSwift Reminder: Please Respond ASAP", htmlContent=html_content)
+
+        elif status=="In Progress":
+            upload_link = f"{FRONTEND_URL}/upload-qp?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&course_name={assignmentObj.course.name}&sem={assignmentObj.exam.sem}&tracking_token={assignmentObj.tracking_token}"
+            html_content = get_submission_reminder_html(
+                semester=assignmentObj.course.sem,
+                course_name=assignmentObj.course.name,
+                course_code=assignmentObj.course.code,
+                branch=assignmentObj.course.department.name,
+                deadline=assignmentObj.exam.paper_submission_deadline,
+                name=assignmentObj.paper_setter.name,
+                syllabus_copy_link=assignmentObj.course.syllabus_doc_url,
+                upload_link=upload_link
+            )
+            send_email(email=assignmentObj.paper_setter.user.email, subject="PaperSwift Reminder: Submit Question Paper", htmlContent=html_content)
+
+        elif status=="Update Requested":
+            upload_link = f"{FRONTEND_URL}/upload-qp?exam_id={assignmentObj.exam.eid}&course_code={assignmentObj.course.code}&course_name={assignmentObj.course.name}&sem={assignmentObj.exam.sem}&tracking_token={assignmentObj.tracking_token}"
+            html_content = get_review_reminder_html(
+                semester=assignmentObj.course.sem,
+                course_name=assignmentObj.course.name,
+                course_code=assignmentObj.course.code,
+                branch=assignmentObj.course.department.name,
+                deadline=assignmentObj.exam.paper_submission_deadline,
+                name=assignmentObj.paper_setter.name,
+                syllabus_copy_link=assignmentObj.course.syllabus_doc_url,
+                upload_link=upload_link,
+                comment=assignmentObj.comments[-1]["comment"]
+            )
+
+        else:
+            raise Exception(f"Reminder can't be sent for status:{assignmentObj.status}")
     except Exception as e:
         logger.error(f"Error: {e}")
         return JsonResponse({"error": str(e)}, status=500)
