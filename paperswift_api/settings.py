@@ -176,6 +176,9 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+LOGIN_URL = '/admin/login/'
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

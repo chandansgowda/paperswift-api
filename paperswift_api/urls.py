@@ -35,8 +35,9 @@ urlpatterns = [
     path('schema/', SpectacularAPIView.as_view(), name='api-schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'),
          name='api-docs',),
+    path('media/question_papers/<path:file_path>', core_views.serve_protected_file, name='serve_protected_file'),
     path('management/', include('management.urls')),
-    path('assignment/', include('assignment.urls'))
+    path('assignment/', include('assignment.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
