@@ -378,8 +378,10 @@ def get_submission_reminder_html(name, semester, course_name, course_code, branc
         <p><strong>Course Code:</strong> {course_code}</p>
         <p><strong>Branch:</strong> {branch}</p>
         <p><strong>Deadline:</strong> {deadline}</p>
-      	<p><strong>*NOTE: Please use the link provided in the previous email to upload.</strong></p>
-      <p>Regards,<br>Examination Section,<br>JSS STU, Mysore</p>
+      	<div>
+            <a href='{syllabus_copy_link}'><button class="btn ">SYLLABUS URL</button></a>
+            <a href='{upload_link}'><button class="btn " ><i class="fas fa-arrow-up"></i>UPLOAD QP</button></a>
+        </div>
         <div class="footer">
             <p>This is an automated email. Please do not reply.</p>
         </div>

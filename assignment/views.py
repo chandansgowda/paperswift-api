@@ -322,9 +322,12 @@ def send_reminder(request):
                 upload_link=upload_link,
                 comment=assignmentObj.comments[-1]["comment"]
             )
+            send_email(email=assignmentObj.paper_setter.user.email, subject="PaperSwift Reminder: Submit Question Paper", htmlContent=html_content)
 
         else:
             raise Exception(f"Reminder can't be sent for status:{assignmentObj.status}")
+
+        return JsonResponse({"message": "Reminder sent successfully"})
     except Exception as e:
         logger.error(f"Error: {e}")
         return JsonResponse({"error": str(e)}, status=500)
