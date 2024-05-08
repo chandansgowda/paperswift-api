@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from core.models import Assignment, Degree, Examination, Course, TeacherDepartment, TeacherYear
+from core.models import Assignment, Degree, Examination, Course, TeacherCourse, TeacherYear
 from .serializers import *
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth.models import User
@@ -130,7 +130,7 @@ def get_degree_and_schemes(request):
 @extend_schema(tags=['Teachers'])
 @api_view(["GET"])
 @permission_classes([IsAdminUser])
-def get_dept_and_teachers_for_exam(request, exam_id):
+def get_teachers_and_courses_for_exam(request, exam_id):
     '''
     Get department and teachers for an exam.
     '''
@@ -138,9 +138,8 @@ def get_dept_and_teachers_for_exam(request, exam_id):
         course = model_to_dict(courseObj)
         assignmentObj = Assignment.objects.filter(
             course=courseObj, exam=examObj).order_by("assigned_date").first()
-        print(assignmentObj)
         if not assignmentObj:
-            course["assignment_id"] = "NA"
+            course["assignment_id"] = -1
             course["assignment_status"] = "NA"
             course["paper_setter_name"] = "NA"
             course["paper_setter_id"] = -1
@@ -158,21 +157,25 @@ def get_dept_and_teachers_for_exam(request, exam_id):
         current_year_teachers = set(
             [teacherObj.teacher.id for teacherObj in TeacherYear.objects.filter(year=year)])
         print("Current year teachers: ", current_year_teachers)
-        response = {"departments": [], "count": len(departments)}
+        response = {"departments": {}, "count": len(departments)}
         for department in departments:
-            # Get Matching Paper Setters
-            print(department.name)
-            department_teacher_objs = TeacherDepartment.objects.filter(
-                department=department)
-            department_teachers = [model_to_dict(department_teacher_obj.teacher)
-                                   for department_teacher_obj in department_teacher_objs if department_teacher_obj.id in current_year_teachers]
-            print(department_teachers)
 
             # Get Matching Courses
-            department_sem_courses = [get_course_and_assignment_status(courseObj, exam) for courseObj in Course.objects.filter(
+            department_sem_courses = [course_obj for course_obj in Course.objects.filter(
                 department=department, sem=exam.sem)]
-            response["departments"].append({department.code: {
-                "paper_setters": department_teachers, "courses": department_sem_courses}})
+
+            # Get Matching Paper Setters for each course
+            department_courses_teachers = []
+            for course_obj in department_sem_courses:
+                course_teacher_objs = TeacherCourse.objects.filter(course=course_obj)
+                course_teachers = [model_to_dict(course_teacher_obj.teacher)
+                                   for course_teacher_obj in course_teacher_objs if course_teacher_obj.id in current_year_teachers]
+                department_courses_teachers.append({
+                    "course": get_course_and_assignment_status(course_obj, exam),
+                    "paper_setters": course_teachers
+                })
+
+            response["departments"][department.code] = department_courses_teachers
 
         # Get Assignment Status
         assignments = Assignment.objects.filter(exam=exam)

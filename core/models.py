@@ -151,12 +151,12 @@ class TeacherYear(models.Model):
         verbose_name_plural = "Teacher-Year Mapping"
 
 
-class TeacherDepartment(models.Model):
+class TeacherCourse(models.Model):
     """
-    Teacher Department Mapping
+    Teacher Course Mapping
     """
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "Teacher-Department Mapping"
+        verbose_name_plural = "Teacher-Course Mapping"

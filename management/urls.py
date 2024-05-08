@@ -34,5 +34,5 @@ urlpatterns = [
     path('get_teachers_by_year', get_teachers_by_year),
     path('clone_previous_academic_year_list', clone_teacher_list),
     path('get_degree_and_schemes', get_degree_and_schemes),
-    path('get_dept_and_teachers_for_exam/<int:exam_id>', get_dept_and_teachers_for_exam)
+    path('get_teachers_and_courses_for_exam/<int:exam_id>', get_teachers_and_courses_for_exam)
 ]

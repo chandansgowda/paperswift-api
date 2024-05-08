@@ -84,8 +84,8 @@ class TeacherYearAdmin(admin.ModelAdmin):
     search_fields = ('teacher__name', 'year')
 
 
-@admin.register(TeacherDepartment)
-class TeacherDepartmentAdmin(admin.ModelAdmin):
-    list_display = ('teacher', 'department')
-    list_filter = ('department', 'teacher')
-    search_fields = ('teacher__name', 'department__name')
+@admin.register(TeacherCourse)
+class TeacherCourseAdmin(admin.ModelAdmin):
+    list_display = ('teacher', 'course')
+    list_filter = ('course', 'teacher')
+    search_fields = ('teacher__name', 'course__name', 'course__code')
